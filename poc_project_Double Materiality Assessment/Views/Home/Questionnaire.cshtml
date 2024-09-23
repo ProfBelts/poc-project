@@ -1,38 +1,46 @@
-﻿@model IEnumerable<poc_project_Double_Materiality_Assessment.Models.Entities.MaterialIssue>
-
+﻿@model poc_project_Double_Materiality_Assessment.Models.ViewModels.DoubleMaterialityViewModel
 <h2>Double Materiality Questionnaire</h2>
 
-<form method="post">
+<form method="post" asp-controller="Home" asp-action="SubmitQuestionnaire">
     <h4>Personal Information</h4>
     <div class="stakeholderInfo contentSection">
-        <label for="stakeholderName">Name:</label>
-        <input type="text" id="stakeholderName" name="stakeholderName" required />
+        <label asp-for="Stakeholder.Name"></label>
+        <input type="text" asp-for="Stakeholder.Name" required />
 
-        <label for="organization">Organization:</label>
-        <input type="text" id="organization" name="organization" required />
+        <label asp-for="Stakeholder.Organization"></label>
+        <input type="text" asp-for="Stakeholder.Organization" required />
 
-        <label for="role">Role:</label>
-        <input type="text" id="role" name="role" required />
+        <label asp-for="Stakeholder.Role"></label>
+        <input type="text" asp-for="Stakeholder.Role" required />
 
-        <label for="category">Category:</label>
-        <input type="text" id="category" name="category" required />
+        <label asp-for="Stakeholder.Category"></label>
+        <input type="text" asp-for="Stakeholder.Category" required />
     </div>
 
     <h4>Issues</h4>
     <div class="issues contentSection">
-        @foreach (var issue in Model)
+        @for (int index = 0; index < Model.MaterialIssues.Count; index++)
         {
-            <div class="issue-content">
+            var issue = Model.MaterialIssues[index];
+            var response = Model.Responses[index]; // Access Responses using the same index
+
+            <div class="issue-container">
                 <label>@issue.IssueName</label>
-                <input type="range" min="1" max="5" name="issueRelevance[@issue.MaterialIssueId]" class="slider" value="3" />
+                <div class="radio-group">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <input type="radio" id="issueRelevance_@issue.MaterialIssueId-@i"
+                               asp-for="Responses[@index].RelevanceScore"
+                               value="@i" />
+                        <label for="issueRelevance_@issue.MaterialIssueId-@i">@i</label>
+                    }
+                </div>
+                <textarea asp-for="Responses[@index].Comments"
+                          rows="3" placeholder="Add your comments here..."></textarea>
+                <input type="hidden" asp-for="Responses[@index].IssueId"
+                       value="@issue.MaterialIssueId" />
             </div>
         }
-    </div>
-
-    <h4>Do You Have Any Other Issues To Add?</h4>
-    <div class="additionalIssues contentSection">
-        <label for="additionalIssues">Please specify:</label>
-        <textarea id="additionalIssues" name="additionalIssues" rows="4" placeholder="Enter additional issues here..."></textarea>
     </div>
 
     <button type="submit">Submit</button>
@@ -40,3 +48,4 @@
 </form>
 
 <link href="~/css/questionnaire.css" rel="stylesheet" type="text/css" asp-append-version="true" />
+
