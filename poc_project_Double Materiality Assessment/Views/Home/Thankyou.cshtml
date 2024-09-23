@@ -1,5 +1,11 @@
-﻿@model Dictionary<int, int>
+﻿@*model Dictionary<int, int>
+*@ 
 
+
+<h1>Thank you!</h1>
+
+
+@*
 <h2>Thank You!</h2>
 <p>Name: @ViewBag.StakeholderName</p>
 <p>Organization: @ViewBag.Organization</p>
@@ -14,3 +20,4 @@
         <li>Issue ID: @issue.Key, Score: @issue.Value</li>
     }
 </ul>
+*@
