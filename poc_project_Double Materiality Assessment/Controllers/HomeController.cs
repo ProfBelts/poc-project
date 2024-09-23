@@ -37,6 +37,46 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
             return View(allIssues);
         }
 
+        public class StakeholderInfo
+        {
+            public string StakeholderName { get; set; }
+            public string Organization { get; set; }
+            public string Role { get; set; }
+            public string Category { get; set; }
+        }
+
+        public IActionResult QuestionnaireSubmit(StakeholderInfo stakeholderInfo, Dictionary<int, int> issueRelevance, string additionalIssues)
+        {
+            // Store the stakeholder info in TempData
+            TempData["StakeholderName"] = stakeholderInfo.StakeholderName;
+            TempData["Organization"] = stakeholderInfo.Organization;
+            TempData["Role"] = stakeholderInfo.Role;
+            TempData["Category"] = stakeholderInfo.Category;
+            TempData["AdditionalIssues"] = additionalIssues;
+
+            // Store issue relevance scores in TempData
+            TempData["IssueRelevance"] = Newtonsoft.Json.JsonConvert.SerializeObject(issueRelevance);
+
+            return RedirectToAction("ThankYou");
+        }
+
+
+        public IActionResult ThankYou()
+        {
+            // Deserialize issue relevance from TempData
+            var issueRelevanceJson = TempData["IssueRelevance"] as string;
+            var issueRelevance = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, int>>(issueRelevanceJson);
+
+            // You can also access other TempData values here
+            ViewBag.StakeholderName = TempData["StakeholderName"];
+            ViewBag.Organization = TempData["Organization"];
+            ViewBag.Role = TempData["Role"];
+            ViewBag.Category = TempData["Category"];
+            ViewBag.AdditionalIssues = TempData["AdditionalIssues"];
+
+            return View(issueRelevance);
+        }
+
 
 
     }

@@ -17,9 +17,9 @@ namespace poc_project_Double_Materiality_Assessment.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Setting up AdditionalIssue
+            // Set IssueId as the primary key
             modelBuilder.Entity<AdditionalIssue>()
-                .HasKey(ai => ai.IssueId); // Set IssueId as the primary key
+                .HasKey(ai => ai.IssueId); 
 
             modelBuilder.Entity<AdditionalIssue>()
                 .HasOne(ai => ai.Stakeholder);
