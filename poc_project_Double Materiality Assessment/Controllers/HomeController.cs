@@ -57,34 +57,70 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
         }
 
         [HttpPost]
-        private async Task<IActionResult> SubmitQuestionnaire(DoubleMaterialityViewModel model)
+        public async Task<IActionResult> SubmitQuestionnaire(DoubleMaterialityViewModel model)
         {
-            Console.WriteLine("SubmitQuestionnaire method hit"); // Debugging line
+            //// Print Stakeholder data
+            //Console.WriteLine("Stakeholder Name: " + model.Stakeholder.Name);
+            //Console.WriteLine("Organization: " + model.Stakeholder.Organization);
+            //Console.WriteLine("Role: " + model.Stakeholder.Role);
+            //Console.WriteLine("Category: " + model.Stakeholder.Category);
 
-            if (ModelState.IsValid)
-            {
-                //// Save Stakeholder
-                //dbContext.Stakeholders.Add(model.Stakeholder);
-                //await dbContext.SaveChangesAsync(); // Save changes to get StakeholderId
 
-                //// Save Responses
-                //foreach (var response in model.Responses)
-                //{
-                //    if (response.RelevanceScore > 0) // Only save responses with a score
-                //    {
-                //        response.StakeholderId = model.Stakeholder.StakeholderId; // Link to the Stakeholder
-                //        dbContext.ResponseRelevances.Add(response);
-                //    }
-                //}
+            //// Print the Responses
+            //foreach (var response in model.Responses)
+            //{
+            //    Console.WriteLine("Relevance Score for Issue " + response.IssueId + ": " + response.RelevanceScore);
+            //    Console.WriteLine("Comments: " + response.Comments);
+            //}
 
-                //await dbContext.SaveChangesAsync(); // Save responses
 
-                return RedirectToAction("Index", "Home"); // Redirect to a success page or action
-            }
+                // Initialize the RelevanceResponses collection if it's null
+                if (model.Stakeholder.RelevanceResponses == null)
+                {
+                    model.Stakeholder.RelevanceResponses = new List<ResponseRelevance>();
+                }
 
-            // If model state is invalid, return the view with the model
-            return View("Questionnaire", model);
+                // Loop through each response and create the necessary ResponseRelevance entities
+                foreach (var response in model.Responses)
+                {
+                    if (response.RelevanceScore > 0) // Only save responses with a relevance score
+                    {
+                        // Link the response to the Stakeholder
+                        response.StakeholderId = model.Stakeholder.StakeholderId;
+                        // Ensure that Comments is not null 
+                        response.Comments = response.Comments ?? string.Empty;
+                        // Add the responses to the Stakeholder
+                        model.Stakeholder.RelevanceResponses.Add(response);
+                    }
+                }
+
+                // Add Stakeholder to the DbContext
+                dbContext.Stakeholders.Add(model.Stakeholder);
+
+                // Save the Stakeholder 
+                await dbContext.SaveChangesAsync();
+
+                // Redirect to the Thank You page after successful submission
+                return RedirectToAction("Thankyou");
+            
         }
 
+    
+
+    public IActionResult ThankYou()
+        {
+            // Deserialize issue relevance from TempData
+            //var issueRelevanceJson = TempData["IssueRelevance"] as string;
+            //var issueRelevance = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, int>>(issueRelevanceJson);
+
+            //// You can also access other TempData values here
+            //ViewBag.StakeholderName = TempData["StakeholderName"];
+            //ViewBag.Organization = TempData["Organization"];
+            //ViewBag.Role = TempData["Role"];
+            //ViewBag.Category = TempData["Category"];
+            //ViewBag.AdditionalIssues = TempData["AdditionalIssues"];
+
+            return View();
+        }
     }
 }
