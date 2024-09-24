@@ -9,8 +9,6 @@
 
 <h2>Double Materiality Questionnaire</h2>
 
-<h2>@organization</h2>
-
 <form method="post" asp-action="QuestionnaireSubmit">
     <h4>Personal Information</h4>
     <div class="stakeholderInfo contentSection">
@@ -18,7 +16,7 @@
         <input type="text" asp-for="Stakeholder.Name" required />
 
         <label asp-for="Stakeholder.Organization"></label>
-        <input type="text" asp-for="Stakeholder.Organization" required />
+        <input type="text" asp-for="Stakeholder.Organization" value="@organization" required />
 
         <label asp-for="Stakeholder.Role"></label>
         <input type="text" asp-for="Stakeholder.Role" required />
@@ -32,7 +30,7 @@
         @for (int index = 0; index < Model.MaterialIssues.Count; index++)
         {
             var issue = Model.MaterialIssues[index];
-            var response = Model.Responses[index]; // Access Responses using the same index
+            var response = Model.Responses[index];
 
             <div class="issue-container">
                 <label>@issue.IssueName</label>
@@ -42,7 +40,7 @@
                         <input type="radio" id="issueRelevance_@issue.MaterialIssueId-@i"
                                asp-for="Responses[@index].RelevanceScore"
                                value="@i" />
-                        <label for="iss ueRelevance_@issue.MaterialIssueId-@i">@i</label>
+                        <label for="issueRelevance_@issue.MaterialIssueId-@i">@i</label>
                     }
                 </div>
                 <textarea asp-for="Responses[@index].Comments"
