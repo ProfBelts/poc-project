@@ -86,6 +86,5 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
             return View("Questionnaire", model);
         }
 
-
     }
 }
