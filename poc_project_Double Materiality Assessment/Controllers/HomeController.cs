@@ -103,27 +103,29 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
        
         public IActionResult Response()
         {
+            var organization = HttpContext.Session.GetString("Organization");
 
             var responses = dbContext.ResponseRelevances
-               .Join(dbContext.Stakeholders,
-                     rr => rr.StakeholderId,
-                     s => s.StakeholderId,
-                    (rr, s) => new { rr, s })
-               .Join(dbContext.MaterialIssues,
-                     combined => combined.rr.IssueId,
-                     m => m.MaterialIssueId,
-                     (combined, m) => new ResponseViewModel
-                     {
-                         Name = combined.s.Name,
-                         Organization = combined.s.Organization,
-                         Role = combined.s.Role,
-                         Category = combined.s.Category,
-                         RelevanceScore = combined.rr.RelevanceScore,
-                         Comments = combined.rr.Comments,
-                         IssueName = m.IssueName,
-                         IssueCategory = m.IssueCategory
-                     })
-               .ToList();
+        .Join(dbContext.Stakeholders,
+              rr => rr.StakeholderId,
+              s => s.StakeholderId,
+              (rr, s) => new { rr, s })
+        .Join(dbContext.MaterialIssues,
+              combined => combined.rr.IssueId,
+              m => m.MaterialIssueId,
+              (combined, m) => new ResponseViewModel
+              {
+                  Name = combined.s.Name,
+                  Organization = combined.s.Organization,
+                  Role = combined.s.Role,
+                  Category = combined.s.Category,
+                  RelevanceScore = combined.rr.RelevanceScore,
+                  Comments = combined.rr.Comments,
+                  IssueName = m.IssueName,
+                  IssueCategory = m.IssueCategory
+              })
+         .Where(response => response.Organization == organization) // Filter by organization
+            .ToList();
 
             return View(responses);
         }
@@ -134,7 +136,18 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
            // Store the variable in session
             HttpContext.Session.SetString("Organization", organization);
 
-            return RedirectToAction("Questionnaire");
+            var stakeHolderOrganization = dbContext.Stakeholders.FirstOrDefault(r => r.Organization == organization);
+
+
+            if(stakeHolderOrganization == null)
+            {
+                return RedirectToAction("Questionnaire");
+            }
+
+            return RedirectToAction("Response");
+
+ 
+        
         }
 
     }
