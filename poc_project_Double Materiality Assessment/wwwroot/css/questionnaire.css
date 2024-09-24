@@ -1,4 +1,4 @@
-﻿body {
+﻿﻿body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
     margin: 20px;
@@ -40,7 +40,6 @@ label {
 }
 
 input[type="text"],
-input[type="range"],
 textarea {
     width: 100%;
     padding: 10px;
@@ -52,10 +51,6 @@ textarea {
 
 textarea {
     resize: vertical; /* Allow vertical resizing only */
-}
-
-input[type="range"] {
-    margin: 10px 0;
 }
 
 button {
@@ -82,38 +77,41 @@ button {
         cursor: not-allowed;
     }
 
-.slidecontainer {
-    width: 100%;
+/* Radio button group styling */
+.radio-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: space-between;
 }
 
-.slider {
-    -webkit-appearance: none;
-    width: 20%;
-    height: 10px;
-    background: #d3d3d3;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-}
-
-    .slider:hover {
-        opacity: 1;
+    /* Hide the default radio button */
+    .radio-group input[type="radio"] {
+        display: none; /* Hide the default radio button */
     }
 
-    .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 20px;
-        height: 20px;
-        background: #04AA6D;
+    /* Custom radio button styling */
+    .radio-group label {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background-color: #e0e0e0; /* Default color */
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        font-weight: bold;
+        color: #333;
         cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
     }
 
-    .slider::-moz-range-thumb {
-        width: 20px;
-        height: 20px;
-        background: #04AA6D;
-        cursor: pointer;
+    /* Change color when selected */
+    .radio-group input[type="radio"]:checked + label {
+        background-color: #4CAF50; /* Selected color */
+        color: white; /* Text color for selected state */
     }
 
+    /* Hover effect */
+    .radio-group label:hover {
+        background-color: #4CAF50; /* Hover color */
+    }

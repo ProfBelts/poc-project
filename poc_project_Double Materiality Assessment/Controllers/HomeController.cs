@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using poc_project_Double_Materiality_Assessment.Data;
 using poc_project_Double_Materiality_Assessment.Models.Entities;
+using poc_project_Double_Materiality_Assessment.Models.ViewModels;
 using System.Diagnostics;
 
 namespace poc_project_Double_Materiality_Assessment.Controllers
@@ -32,69 +34,122 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
 
         public IActionResult Questionnaire()
         {
-            // Sample list of strings
+            // Fetch all material issues
             var allIssues = dbContext.MaterialIssues.ToList();
-            return View(allIssues);
-        }
 
-        public class StakeholderInfo
-        {
-            public string StakeholderName { get; set; }
-            public string Organization { get; set; }
-            public string Role { get; set; }
-            public string Category { get; set; }
-        }
-
-        public IActionResult QuestionnaireSubmit(StakeholderInfo stakeholderInfo, Dictionary<int, int> issueRelevance, string additionalIssues)
-        {
-
-            // Store the stakeholder info in TempData
-            //TempData["StakeholderName"] = stakeholderInfo.StakeholderName;
-            //TempData["Organization"] = stakeholderInfo.Organization;
-            //TempData["Role"] = stakeholderInfo.Role;
-            //TempData["Category"] = stakeholderInfo.Category;
-            //TempData["AdditionalIssues"] = additionalIssues;
-
-            //// Store issue relevance scores in TempData
-            //TempData["IssueRelevance"] = Newtonsoft.Json.JsonConvert.SerializeObject(issueRelevance);
-
-
-            var stakeholder = new Stakeholder()
+            // Create a new view model instance
+            var viewModel = new DoubleMaterialityViewModel
             {
-                Name = stakeholderInfo.StakeholderName,
-                Organization = stakeholderInfo.Organization,
-                Role = stakeholderInfo.Role,
-                Category = stakeholderInfo.Category
+                Stakeholder = new Stakeholder(), // Initialize an empty Stakeholder object
+                MaterialIssues = allIssues,       // Pass the list of material issues
+                Responses = new List<ResponseRelevance>() // Initialize the Responses list
             };
 
-            dbContext.Stakeholders.Add(stakeholder);
+            // Initialize Responses with empty ResponseRelevance objects for each issue
+            foreach (var issue in allIssues)
+            {
+                viewModel.Responses.Add(new ResponseRelevance
+                {
+                    IssueId = issue.MaterialIssueId // Link each ResponseRelevance to its MaterialIssue
+                });
+            }
 
-            dbContext.SaveChanges();
-
-
-            return RedirectToAction("ThankYou");
-
-
+            return View(viewModel);
         }
 
 
-        public IActionResult ThankYou()
+        [HttpPost]
+        public async Task<IActionResult> QuestionnaireSubmit(DoubleMaterialityViewModel model)
         {
-            // Deserialize issue relevance from TempData
-            //var issueRelevanceJson = TempData["IssueRelevance"] as string;
-            //var issueRelevance = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, int>>(issueRelevanceJson);
 
-            //// You can also access other TempData values here
-            //ViewBag.StakeholderName = TempData["StakeholderName"];
-            //ViewBag.Organization = TempData["Organization"];
-            //ViewBag.Role = TempData["Role"];
-            //ViewBag.Category = TempData["Category"];
-            //ViewBag.AdditionalIssues = TempData["AdditionalIssues"];
+            //// Print the Responses
+            foreach (var response in model.Responses)
+            {
+                Console.WriteLine("Relevance Score for Issue " + response.IssueId + ": " + response.RelevanceScore);
+                Console.WriteLine("Comments: " + response.Comments);
+            }
 
-            return View();
+
+            // Initialize the RelevanceResponses collection if it's null
+            if (model.Stakeholder.RelevanceResponses == null)
+            {
+                model.Stakeholder.RelevanceResponses = new List<ResponseRelevance>();
+            }
+
+            // Loop through each response and create the necessary ResponseRelevance entities
+            foreach (var response in model.Responses)
+            {
+                if (response.RelevanceScore > 0) // Only save responses with a relevance score
+                {
+                    // Link the response to the Stakeholder
+                    response.StakeholderId = model.Stakeholder.StakeholderId;
+                    // Ensure that Comments is not null 
+                    response.Comments = response.Comments ?? string.Empty;
+                    // Add the responses to the Stakeholder
+                    model.Stakeholder.RelevanceResponses.Add(response);
+                }
+            }
+
+            // Add Stakeholder to the DbContext
+            dbContext.Stakeholders.Add(model.Stakeholder);
+
+            // Save the Stakeholder 
+            await dbContext.SaveChangesAsync();
+
+            // Redirect to the Thank You page after successful submission
+            return RedirectToAction("Response");
+
+        }
+       
+        public IActionResult Response()
+        {
+
+            var responses = dbContext.ResponseRelevances
+               .Join(dbContext.Stakeholders,
+                     rr => rr.StakeholderId,
+                     s => s.StakeholderId,
+                    (rr, s) => new { rr, s })
+               .Join(dbContext.MaterialIssues,
+                     combined => combined.rr.IssueId,
+                     m => m.MaterialIssueId,
+                     (combined, m) => new ResponseViewModel
+                     {
+                         Name = combined.s.Name,
+                         Organization = combined.s.Organization,
+                         Role = combined.s.Role,
+                         Category = combined.s.Category,
+                         RelevanceScore = combined.rr.RelevanceScore,
+                         Comments = combined.rr.Comments,
+                         IssueName = m.IssueName,
+                         IssueCategory = m.IssueCategory
+                     })
+               .ToList();
+
+            return View(responses);
         }
 
+        [HttpPost]
+        public IActionResult CheckOrganization(string organization)
+        {
+           // Store the variable in session
+            HttpContext.Session.SetString("Organization", organization);
 
+            return RedirectToAction("Questionnaire");
+        }
 
     }
+
+
+
+
+
+
+
+
+
+   
+
+
+
 }
+

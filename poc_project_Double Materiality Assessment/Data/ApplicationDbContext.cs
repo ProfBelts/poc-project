@@ -17,23 +17,43 @@ namespace poc_project_Double_Materiality_Assessment.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Set IssueId as the primary key
-            modelBuilder.Entity<AdditionalIssue>()
-                .HasKey(ai => ai.IssueId); 
-
-            modelBuilder.Entity<AdditionalIssue>()
-                .HasOne(ai => ai.Stakeholder);
 
             modelBuilder.Entity<ResponseRelevance>()
-              .HasKey(rr => rr.ResponsePriorityId);
+             .HasOne(rr => rr.Stakeholder)
+             .WithMany(s => s.RelevanceResponses)
+             .HasForeignKey(rr => rr.StakeholderId);
 
-            modelBuilder.Entity<MaterialIssue>().HasData(
-            new MaterialIssue { MaterialIssueId = 1, IssueName = "Climate Change", IssueCategory = "Environmental" },
-            new MaterialIssue { MaterialIssueId = 2, IssueName = "Data Privacy", IssueCategory = "Social" },
-            new MaterialIssue { MaterialIssueId = 3, IssueName = "Corporate Governance", IssueCategory = "Governance" },
-            new MaterialIssue { MaterialIssueId = 4, IssueName = "Supply Chain Management", IssueCategory = "Operational" },
-            new MaterialIssue { MaterialIssueId = 5, IssueName = "Waste Management", IssueCategory = "Environmental" }
-        );
-            }
+            // ResponseRelevance to MaterialIssue relationship
+            modelBuilder.Entity<ResponseRelevance>()
+                .HasOne(rr => rr.Issue)
+                .WithMany()
+                .HasForeignKey(rr => rr.IssueId);
+
+            modelBuilder.Entity<ResponseRelevance>()
+                .HasKey(rr => rr.ResponseId);
+
+            modelBuilder.Entity<AdditionalIssue>()
+                .HasKey(ai => ai.IssueId);
+
+            // Similar relationships for ResponsePriority
+            modelBuilder.Entity<ResponsePriority>()
+                .HasOne(rp => rp.Stakeholder)
+                .WithMany()
+                .HasForeignKey(rp => rp.StakeholderId);
+
+
+            modelBuilder.Entity<ResponsePriority>()
+                .HasOne(rp => rp.Issue)
+                .WithMany()
+                .HasForeignKey(rp => rp.IssueId);
+
+            modelBuilder.Entity<ResponsePriority>()
+                .HasKey(rp => rp.ResponseId);
+
+
+            base.OnModelCreating(modelBuilder);
+
+        }
+
     }
 }

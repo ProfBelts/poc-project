@@ -2,7 +2,7 @@
 {
     public class ResponseRelevance
     {
-        public int ResponsePriorityId { get; set; }
+        public int ResponseId { get; set; }
         public int StakeholderId { get; set; }
         public Stakeholder Stakeholder { get; set; }
         public int IssueId { get; set; }

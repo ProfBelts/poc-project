@@ -1,0 +1,32 @@
+﻿@model List<poc_project_Double_Materiality_Assessment.Models.ViewModels.ResponseViewModel>
+
+<h2>Responses</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Organization</th>
+            <th>Role</th>
+            <th>Category</th>
+            <th>Relevance Score</th>
+            <th>Comments</th>
+            <th>Issue Name</th>
+            <th>Issue Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var response in Model)
+        {
+            <tr>
+                <td>@response.Name</td>
+                <td>@response.Organization</td>
+                <td>@response.Role</td>
+                <td>@response.Category</td>
+                <td>@response.RelevanceScore</td>
+                <td>@response.Comments</td>
+                <td>@response.IssueName</td>
+                <td>@response.IssueCategory</td>
+            </tr>
+        }
+    </tbody>
+</table>

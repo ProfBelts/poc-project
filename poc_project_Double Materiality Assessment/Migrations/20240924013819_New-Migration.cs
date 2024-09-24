@@ -5,7 +5,7 @@
 namespace poc_project_Double_Materiality_Assessment.Migrations
 {
     /// <inheritdoc />
-    public partial class InitializeDb : Migration
+    public partial class NewMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,17 +49,11 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                     StakeholderId = table.Column<int>(type: "int", nullable: false),
                     IssueName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImportanceRank = table.Column<int>(type: "int", nullable: false),
-                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaterialIssueId = table.Column<int>(type: "int", nullable: true)
+                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AdditionalIssues", x => x.IssueId);
-                    table.ForeignKey(
-                        name: "FK_AdditionalIssues_MaterialIssues_MaterialIssueId",
-                        column: x => x.MaterialIssueId,
-                        principalTable: "MaterialIssues",
-                        principalColumn: "MaterialIssueId");
                     table.ForeignKey(
                         name: "FK_AdditionalIssues_Stakeholders_StakeholderId",
                         column: x => x.StakeholderId,
@@ -72,7 +66,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                 name: "ResponsePriorities",
                 columns: table => new
                 {
-                    ResponsePriorityId = table.Column<int>(type: "int", nullable: false)
+                    ResponseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StakeholderId = table.Column<int>(type: "int", nullable: false),
                     IssueId = table.Column<int>(type: "int", nullable: false),
@@ -80,7 +74,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResponsePriorities", x => x.ResponsePriorityId);
+                    table.PrimaryKey("PK_ResponsePriorities", x => x.ResponseId);
                     table.ForeignKey(
                         name: "FK_ResponsePriorities_MaterialIssues_IssueId",
                         column: x => x.IssueId,
@@ -99,7 +93,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                 name: "ResponseRelevances",
                 columns: table => new
                 {
-                    ResponsePriorityId = table.Column<int>(type: "int", nullable: false)
+                    ResponseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StakeholderId = table.Column<int>(type: "int", nullable: false),
                     IssueId = table.Column<int>(type: "int", nullable: false),
@@ -108,7 +102,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResponseRelevances", x => x.ResponsePriorityId);
+                    table.PrimaryKey("PK_ResponseRelevances", x => x.ResponseId);
                     table.ForeignKey(
                         name: "FK_ResponseRelevances_MaterialIssues_IssueId",
                         column: x => x.IssueId,
@@ -122,11 +116,6 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                         principalColumn: "StakeholderId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AdditionalIssues_MaterialIssueId",
-                table: "AdditionalIssues",
-                column: "MaterialIssueId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AdditionalIssues_StakeholderId",
