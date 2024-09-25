@@ -11,8 +11,8 @@ using poc_project_Double_Materiality_Assessment.Data;
 namespace poc_project_Double_Materiality_Assessment.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240924013819_New-Migration")]
-    partial class NewMigration
+    [Migration("20240925020117_InitMigration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

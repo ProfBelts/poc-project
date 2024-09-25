@@ -1,9 +1,14 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Home";
+}
+<body>
+    <h2>Please participate in the survey for your organization</h2>
 
-<h2>Please participate on the survey for your organization</h2>
+    <form method="post" asp-action="CheckOrganization">
+        <h4>Please enter your organization name:</h4>
+        <input type="text" name="organization" required />
+        <button type="submit">Submit</button>
+    </form>
+</body>
 
-<form method="post" asp-action="CheckOrganization">
-    <h4>Please enter your organization name:</h4>
-    <input type="text" name="organization" required />
-    <button type="submit">Submit</button>
-</form>
+<link href="~/css/home.css" rel="stylesheet" type="text/css" asp-append-version="true" />

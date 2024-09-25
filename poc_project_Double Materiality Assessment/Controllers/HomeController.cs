@@ -63,11 +63,11 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
         {
 
             //// Print the Responses
-            foreach (var response in model.Responses)
-            {
-                Console.WriteLine("Relevance Score for Issue " + response.IssueId + ": " + response.RelevanceScore);
-                Console.WriteLine("Comments: " + response.Comments);
-            }
+            //foreach (var response in model.Responses)
+            //{
+            //    Console.WriteLine("Relevance Score for Issue " + response.IssueId + ": " + response.RelevanceScore);
+            //    Console.WriteLine("Comments: " + response.Comments);
+            //}
 
 
             // Initialize the RelevanceResponses collection if it's null
@@ -136,7 +136,7 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
            // Store the variable in session
             HttpContext.Session.SetString("Organization", organization);
 
-            var stakeHolderOrganization = dbContext.Stakeholders.FirstOrDefault(r => r.Organization == organization);
+            var stakeHolderOrganization = dbContext.Stakeholders.FirstOrDefault(r => r.Organization.ToLower() == organization.ToLower()); 
 
 
             if(stakeHolderOrganization == null)
