@@ -23,17 +23,21 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
         // The Index action fetches all material issues and passes them to the view
         public IActionResult Index()
         {
-            var allIssues = dbContext.MaterialIssues.ToList();
-            return View(allIssues);
-        }
-
-        public IActionResult Privacy()
-        {
             return View();
         }
 
         public IActionResult Questionnaire()
         {
+
+            var organization = HttpContext.Session.GetString("Organization");
+
+
+            if (organization == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+
             // Fetch all material issues
             var allIssues = dbContext.MaterialIssues.ToList();
 
@@ -105,27 +109,49 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
         {
             var organization = HttpContext.Session.GetString("Organization");
 
+            if (organization == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+
             var responses = dbContext.ResponseRelevances
-        .Join(dbContext.Stakeholders,
-              rr => rr.StakeholderId,
-              s => s.StakeholderId,
-              (rr, s) => new { rr, s })
-        .Join(dbContext.MaterialIssues,
-              combined => combined.rr.IssueId,
-              m => m.MaterialIssueId,
-              (combined, m) => new ResponseViewModel
-              {
-                  Name = combined.s.Name,
-                  Organization = combined.s.Organization,
-                  Role = combined.s.Role,
-                  Category = combined.s.Category,
-                  RelevanceScore = combined.rr.RelevanceScore,
-                  Comments = combined.rr.Comments,
-                  IssueName = m.IssueName,
-                  IssueCategory = m.IssueCategory
-              })
-         .Where(response => response.Organization == organization) // Filter by organization
-            .ToList();
+            .Join(dbContext.Stakeholders,
+                  rr => rr.StakeholderId,
+                  s => s.StakeholderId,
+                  (rr, s) => new { rr, s })
+            .Join(dbContext.MaterialIssues,
+                  combined => combined.rr.IssueId,
+                  m => m.MaterialIssueId,
+                  (combined, m) => new ResponseViewModel
+                  {
+                      Name = combined.s.Name,
+                      Organization = combined.s.Organization,
+                      Role = combined.s.Role,
+                      Category = combined.s.Category,
+                      RelevanceScore = combined.rr.RelevanceScore,
+                      Comments = combined.rr.Comments,
+                      IssueName = m.IssueName,
+                      IssueCategory = m.IssueCategory
+                  })
+             .Where(response => response.Organization == organization) // Filter by organization
+            .GroupBy(response => new { response.IssueName, response.IssueCategory }) // Group by issue name and category
+            .Select(g => new ResponseViewModel
+        {
+            Name = g.FirstOrDefault().Name,
+            Organization = g.FirstOrDefault().Organization,
+            Role = g.FirstOrDefault().Role,
+            Category = g.FirstOrDefault().Category,
+            RelevanceScore = (int)g.Average(x => x.RelevanceScore), // Calculate the average relevance score
+            Comments = string.Join("<br/>", g
+                .Where(x => !string.IsNullOrEmpty(x.Comments))
+                .Select(x => $"{x.Name} ({x.Role}): {x.Comments}")),
+            IssueName = g.Key.IssueName,
+            IssueCategory = g.Key.IssueCategory
+        })
+        .OrderByDescending(response => response.RelevanceScore) // Sort by average RelevanceScore descending
+        .ToList();
+
 
             return View(responses);
         }

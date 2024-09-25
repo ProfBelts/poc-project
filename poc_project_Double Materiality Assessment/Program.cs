@@ -12,23 +12,16 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add Razor Pages
 builder.Services.AddRazorPages();
-
-// Add Swagger services
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Add Controllers with Views
 builder.Services.AddControllersWithViews();
 
 // Add session support
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
-    options.Cookie.HttpOnly = true; // Make the cookie accessible only by the server
-    options.Cookie.IsEssential = true; // Make the session cookie essential
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
-// Register IHttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
@@ -37,12 +30,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty;
-    });
 }
 else
 {
@@ -54,6 +41,17 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Redirect index.html to Home/Index
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Equals("/index.html", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.Redirect("/Home");
+        return;
+    }
+    await next();
+});
 
 // Add session middleware
 app.UseSession();
