@@ -37,9 +37,18 @@
                 <div class="radio-group">
                     @for (int i = 1; i <= 5; i++)
                     {
-                        <input type="radio" id="issueRelevance_@issue.MaterialIssueId-@i"
-                               asp-for="Responses[@index].RelevanceScore"
-                               value="@i" />
+                        // TODO: Clean if possible
+                        if (i == 3)
+                        {
+                            <input type="radio" id="issueRelevance_@issue.MaterialIssueId-@i"asp-for="Responses[@index].RelevanceScore" value="@i"  checked/>
+                        }
+                        else
+                        {
+                            <input type="radio" id="issueRelevance_@issue.MaterialIssueId-@i"asp-for="Responses[@index].RelevanceScore"
+               value="@i" />
+                        }
+
+
                         <label for="issueRelevance_@issue.MaterialIssueId-@i">@i</label>
                     }
                 </div>

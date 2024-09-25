@@ -125,7 +125,22 @@ namespace poc_project_Double_Materiality_Assessment.Controllers
                   IssueCategory = m.IssueCategory
               })
          .Where(response => response.Organization == organization) // Filter by organization
-            .ToList();
+        .GroupBy(response => new { response.IssueName, response.IssueCategory }) // Group by issue name and category
+        .Select(g => new ResponseViewModel
+        {
+            Name = g.FirstOrDefault().Name,
+            Organization = g.FirstOrDefault().Organization,
+            Role = g.FirstOrDefault().Role,
+            Category = g.FirstOrDefault().Category,
+            RelevanceScore = (int)g.Average(x => x.RelevanceScore), // Calculate the average relevance score
+            Comments = string.Join("<br/>", g
+                .Where(x => !string.IsNullOrEmpty(x.Comments))
+                .Select(x => $"{x.Name} ({x.Role}): {x.Comments}")),
+            IssueName = g.Key.IssueName,
+            IssueCategory = g.Key.IssueCategory
+        })
+        .OrderByDescending(response => response.RelevanceScore) // Sort by average RelevanceScore descending
+        .ToList();
 
             return View(responses);
         }
