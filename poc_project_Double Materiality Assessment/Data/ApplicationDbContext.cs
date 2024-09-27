@@ -16,6 +16,8 @@ namespace poc_project_Double_Materiality_Assessment.Data
         public DbSet<AdditionalIssue> AdditionalIssues { get; set; } = default!;
         public DbSet<Draft> Drafts { get; set; } = default!;
 
+        public DbSet<DraftResponseRelevance> DraftsResponse { get; set; } = default!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +38,12 @@ namespace poc_project_Double_Materiality_Assessment.Data
 
             modelBuilder.Entity<AdditionalIssue>()
                 .HasKey(ai => ai.IssueId);
+
+            modelBuilder.Entity<Draft>()
+                .HasKey(d => d.DraftId);
+
+            modelBuilder.Entity<DraftResponseRelevance>()
+                .HasKey(dr => dr.ResponseId);
 
             // Similar relationships for ResponsePriority
             modelBuilder.Entity<ResponsePriority>()
@@ -59,11 +67,7 @@ namespace poc_project_Double_Materiality_Assessment.Data
               .HasForeignKey(d => d.StakeholderId) 
               .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ResponseRelevance>()
-              .HasOne(rr => rr.Draft) 
-              .WithMany() 
-              .HasForeignKey(rr => rr.DraftId) // Specify the foreign key
-              .OnDelete(DeleteBehavior.SetNull);
+
 
 
             base.OnModelCreating(modelBuilder);

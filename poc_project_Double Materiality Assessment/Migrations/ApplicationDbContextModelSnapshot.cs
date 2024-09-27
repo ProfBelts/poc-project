@@ -48,7 +48,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
                     b.HasIndex("StakeholderId");
 
-                    b.ToTable("AdditionalIssues");
+                    b.ToTable("AdditionalIssues", (string)null);
                 });
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.Draft", b =>
@@ -66,7 +66,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
                     b.HasIndex("StakeholderId");
 
-                    b.ToTable("Drafts");
+                    b.ToTable("Drafts", (string)null);
                 });
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.MaterialIssue", b =>
@@ -87,7 +87,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
                     b.HasKey("MaterialIssueId");
 
-                    b.ToTable("MaterialIssues");
+                    b.ToTable("MaterialIssues", (string)null);
                 });
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.ResponsePriority", b =>
@@ -113,7 +113,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
                     b.HasIndex("StakeholderId");
 
-                    b.ToTable("ResponsePriorities");
+                    b.ToTable("ResponsePriorities", (string)null);
                 });
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.ResponseRelevance", b =>
@@ -131,9 +131,6 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                     b.Property<int?>("DraftId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DraftId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("IssueId")
                         .HasColumnType("int");
 
@@ -147,13 +144,11 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
                     b.HasIndex("DraftId");
 
-                    b.HasIndex("DraftId1");
-
                     b.HasIndex("IssueId");
 
                     b.HasIndex("StakeholderId");
 
-                    b.ToTable("ResponseRelevances");
+                    b.ToTable("ResponseRelevances", (string)null);
                 });
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.Stakeholder", b =>
@@ -182,7 +177,7 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
                     b.HasKey("StakeholderId");
 
-                    b.ToTable("Stakeholders");
+                    b.ToTable("Stakeholders", (string)null);
                 });
 
             modelBuilder.Entity("AdditionalIssue", b =>
@@ -228,14 +223,9 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.ResponseRelevance", b =>
                 {
-                    b.HasOne("poc_project_Double_Materiality_Assessment.Models.Entities.Draft", "Draft")
-                        .WithMany()
-                        .HasForeignKey("DraftId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("poc_project_Double_Materiality_Assessment.Models.Entities.Draft", null)
                         .WithMany("RelevanceResponses")
-                        .HasForeignKey("DraftId1");
+                        .HasForeignKey("DraftId");
 
                     b.HasOne("poc_project_Double_Materiality_Assessment.Models.Entities.MaterialIssue", "Issue")
                         .WithMany()
@@ -248,8 +238,6 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                         .HasForeignKey("StakeholderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Draft");
 
                     b.Navigation("Issue");
 
