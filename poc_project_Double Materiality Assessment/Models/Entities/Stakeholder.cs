@@ -8,6 +8,9 @@
         public string Role { get; set; }
         public string Category { get; set; }
         public ICollection<ResponseRelevance> RelevanceResponses { get; set; }
+
+        public ICollection<Draft> Drafts { get; set; }
+
     }
 
 }

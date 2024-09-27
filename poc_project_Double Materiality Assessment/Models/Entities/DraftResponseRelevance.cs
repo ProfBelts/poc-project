@@ -1,6 +1,6 @@
 ﻿namespace poc_project_Double_Materiality_Assessment.Models.Entities
 {
-    public class ResponseRelevance
+    public class DraftResponseRelevance
     {
         public int ResponseId { get; set; }
         public int StakeholderId { get; set; }
@@ -9,10 +9,5 @@
         public MaterialIssue Issue { get; set; }
         public int RelevanceScore { get; set; }
         public string Comments { get; set; }
-
-        // Add the DraftId property here
-        public int? DraftId { get; set; } // Make it nullable if using SetNull on delete
-        public Draft Draft { get; set; } // Navigation property
     }
-
 }

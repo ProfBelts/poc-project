@@ -13,16 +13,16 @@
     <h4>Personal Information</h4>
     <div class="stakeholderInfo contentSection">
         <label asp-for="Stakeholder.Name"></label>
-        <input type="text" asp-for="Stakeholder.Name" required />
+        <input type="text" asp-for="Stakeholder.Name" value="@Model.Stakeholder?.Name" required />
 
         <label asp-for="Stakeholder.Organization"></label>
         <input type="text" asp-for="Stakeholder.Organization" value="@organization" required />
 
         <label asp-for="Stakeholder.Role"></label>
-        <input type="text" asp-for="Stakeholder.Role" required />
+        <input type="text" asp-for="Stakeholder.Role" value="@Model.Stakeholder?.Role" required />
 
         <label asp-for="Stakeholder.Category"></label>
-        <input type="text" asp-for="Stakeholder.Category" required />
+        <input type="text" asp-for="Stakeholder.Category" value="@Model.Stakeholder?.Category" required />
     </div>
 
     <h4>Issues</h4>
@@ -44,7 +44,7 @@
                     }
                 </div>
                 <textarea asp-for="Responses[@index].Comments"
-                          rows="3" placeholder="Add your comments here..."></textarea>
+                          rows="3" placeholder="Add your comments here..." value="@response?.Comments"></textarea>
                 <input type="hidden" asp-for="Responses[@index].IssueId"
                        value="@issue.MaterialIssueId" />
             </div>
@@ -52,7 +52,7 @@
     </div>
 
     <button type="submit">Submit</button>
-    <button type="button" onclick="saveForLater()">Save for Later</button>
+    <button type="submit" asp-action="SaveForLater")>Save for Later</button>
 </form>
 
 <link href="~/css/questionnaire.css" rel="stylesheet" type="text/css" asp-append-version="true" />

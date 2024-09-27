@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using poc_project_Double_Materiality_Assessment.Data;
 
@@ -11,9 +12,11 @@ using poc_project_Double_Materiality_Assessment.Data;
 namespace poc_project_Double_Materiality_Assessment.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240927024427_UpdateEntityNew")]
+    partial class UpdateEntityNew
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,9 +134,6 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                     b.Property<int?>("DraftId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DraftId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("IssueId")
                         .HasColumnType("int");
 
@@ -146,8 +146,6 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                     b.HasKey("ResponseId");
 
                     b.HasIndex("DraftId");
-
-                    b.HasIndex("DraftId1");
 
                     b.HasIndex("IssueId");
 
@@ -228,14 +226,9 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
 
             modelBuilder.Entity("poc_project_Double_Materiality_Assessment.Models.Entities.ResponseRelevance", b =>
                 {
-                    b.HasOne("poc_project_Double_Materiality_Assessment.Models.Entities.Draft", "Draft")
-                        .WithMany()
-                        .HasForeignKey("DraftId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("poc_project_Double_Materiality_Assessment.Models.Entities.Draft", null)
                         .WithMany("RelevanceResponses")
-                        .HasForeignKey("DraftId1");
+                        .HasForeignKey("DraftId");
 
                     b.HasOne("poc_project_Double_Materiality_Assessment.Models.Entities.MaterialIssue", "Issue")
                         .WithMany()
@@ -248,8 +241,6 @@ namespace poc_project_Double_Materiality_Assessment.Migrations
                         .HasForeignKey("StakeholderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Draft");
 
                     b.Navigation("Issue");
 
